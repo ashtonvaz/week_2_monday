@@ -1,0 +1,58 @@
+---
+title: "Counties"
+auto: "Ashton"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+#| label: load data
+
+nyc_data <- read_csv("data/nyc_tracts.csv", show_col_types = FALSE)
+#head(nyc_data)
+#tail(nyc_data)
+#summarize(nyc_data)
+#str(nyc_data)
+
+nyc_data_clean <- nyc_data |>
+  drop_na()
+nyc_data_clean <- nyc_data_clean |>
+  mutate(separate_wider_delim(
+          nyc_data_clean,
+          cols = tract,
+          delim = ";",
+          names = c(NA, "county", NA),
+          names_repair = "universal")
+    ) |>
+  mutate(county = trimws(county))
+
+#nyc_data_clean
+
+#nyc_data_clean |>
+#  filter(med_income >= 96406, med_income < 101406) |>
+#  group_by(race)
+
+nyc_data_clean |>
+  ggplot(aes(x = med_income, fill = county)) +
+    geom_histogram(binwidth = 5000, color = "black") +
+    labs(
+      title = "Median Income by Census Tract in New York City",
+      x = "Median Income",
+      y = "Number of Census Tracts",
+      fill = "County",
+      caption = "Source: NYC Census Data",
+    ) +
+    scale_x_continuous(labels = scales::comma_format()) -> nyc_data_plot
+nyc_data_plot
+nyc_data_plot +
+  facet_wrap(~ race)
+```
+

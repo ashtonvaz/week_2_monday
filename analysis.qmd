@@ -6,6 +6,8 @@ execute:
   echo: false
 ---
 
+GitHub project [here](https://github.com/ashtonvaz/week_2_monday)
+
 ```{r}
 #| label: setup
 #| message: false
